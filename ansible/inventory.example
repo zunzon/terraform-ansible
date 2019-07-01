@@ -1,0 +1,13 @@
+[web]
+<IP's>
+
+[db]
+<IP's>
+
+[db:vars]
+ansible_ssh_user=<AuthUser>
+ansible_ssh_private_key_file=<PublicKeyPath>
+
+[web:vars]
+ansible_ssh_user=<AuthUser>
+ansible_ssh_private_key_file=<PublicKeyPath>
