@@ -1,0 +1,6 @@
+- hosts: web
+  roles:
+    - web
+- hosts: db
+  roles:
+    - db

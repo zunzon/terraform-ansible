@@ -1,0 +1,5 @@
+tasks.txt
+terraform/.terraform/
+terraform/terraform.*
+ansible/playbook.retry
+ansible/inventory

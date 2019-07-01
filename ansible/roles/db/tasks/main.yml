@@ -1,0 +1,21 @@
+- name: 1. Install mysql-server
+  apt: name=mysql-server state=present
+  become: yes
+
+- name: 2. Install python-mysqldb
+  apt: name=python-mysqldb state=present
+  become: yes
+
+- name: 3. Configure MySQL my.cnf
+  copy: src=./files/my.cnf dest=/etc/mysql/my.cnf owner=root group=root mode=0644 
+  notify: 
+    - restart mysql
+  become: yes
+
+- name: 4. Add database
+  mysql_db: name=wordpress state=present collation=utf8_general_ci
+  become: yes
+
+- name: 5. Add mysql-user
+  mysql_user: name=wordpress host=% password=password priv=*.*:ALL state=present
+  become: yes

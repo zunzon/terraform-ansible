@@ -1,0 +1,11 @@
+- name: 1. Install Nginx
+  apt: name=nginx state=present
+  become: yes
+
+- name: 2. Install php-fpm
+  apt: name=php-fpm update_cache=yes state=present
+  become: yes
+
+- name: 3. Install php-mysql
+  apt: name=php7.2-mysql update_cache=yes state=present
+  become: yes
