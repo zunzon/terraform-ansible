@@ -1,0 +1,9 @@
+- name: 1. Install Nginx
+  apt: name=nginx state=present
+  become: yes
+
+- name: 2. Configure nginx
+  copy: src=./files/default dest=/etc/nginx/sites-enabled/default owner=root group=root mode=644
+  notify:
+    - restart nginx
+  become: yes

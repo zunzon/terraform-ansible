@@ -9,3 +9,15 @@
 - name: 3. Install php-mysql
   apt: name=php7.2-mysql update_cache=yes state=present
   become: yes
+
+- name: 4. Configure nginx
+  copy: src=./files/default dest=/etc/nginx/sites-enabled/default owner=root group=root mode=644
+  notify:
+    - restart nginx
+  become: yes
+
+- name: 5. Configure php-fpm
+  copy: src=./files/www.conf dest=/etc/php/7.2/fpm/pool.d/www.conf owner=root group=root mode=644
+  notify:
+    - restart php-fpm
+  become: yes

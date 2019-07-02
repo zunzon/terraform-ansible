@@ -1,0 +1,20 @@
+- name: 1. Check if wordpress installed
+  stat: path=/var/www/wordpress
+  register: wordpress
+  changed_when: false
+  become: yes
+
+- name: 2. Download and install wp
+  shell: |
+    mkdir -p /var/www/wordpress && cd /var/www/wordpress
+    wget https://wordpress.org/latest.tar.gz
+    gunzip latest.tar.gz
+    tar -xvf latest.tar
+    cp -R wordpress/. .
+    rm -rf wordpress/ latest.tar
+  when: not wordpress.stat.exists
+  become: yes
+
+- name: 3. Update wp config
+  copy: src=./files/wp-config.php dest=/var/www/wordpress/wp-config.php owner=root group=root mode=644
+  become: yes

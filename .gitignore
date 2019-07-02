@@ -3,3 +3,6 @@ terraform/.terraform/
 terraform/terraform.*
 ansible/playbook.retry
 ansible/inventory
+ansible/roles/datadog
+ansible/roles/grafana
+ansible/roles/prometheus

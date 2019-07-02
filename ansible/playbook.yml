@@ -1,6 +1,12 @@
 - hosts: web
   roles:
     - web
+    - wordpress
 - hosts: db
   roles:
     - db
+- hosts: monitor
+  roles:
+    - grafana
+    - prometheus
+    - grafana-nginx

@@ -135,3 +135,25 @@ resource "aws_instance" "db" {
   }
 }
 
+
+resource "aws_instance" "monitor" {
+  connection {
+    host = self.public_ip
+    user = "ubuntu"
+    private_key = "${file(var.private_key_path)}"
+  }
+  ami = "ami-024a64a6685d05041"
+  instance_type = "t2.micro"
+  key_name = "${aws_key_pair.btsol.key_name}"
+  subnet_id = "${aws_subnet.default.id}"
+  vpc_security_group_ids = ["${aws_security_group.btsol-web.id}"]
+  provisioner "remote-exec" {
+    inline = [
+      "sudo ln -s /usr/bin/python3 /usr/bin/python",
+    ]
+  }
+  tags = {
+    Name = "btsol-monitor"
+  }
+}
+
