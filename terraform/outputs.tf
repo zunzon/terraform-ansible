@@ -15,3 +15,11 @@ output "MonitorIPs" {
   value = "${aws_instance.monitor.public_ip}"
 }
 
+output "ElkIPs" {
+  value = "${aws_instance.elk.public_ip}"
+}
+
+output "ElkInternalIPs" {
+  value = "${aws_instance.elk.private_ip}"
+}
+

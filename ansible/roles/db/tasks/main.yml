@@ -1,21 +1,66 @@
 - name: 1. Install mysql-server
-  apt: name=mysql-server state=present
-  become: yes
+  apt: 
+    name: mysql-server
+    state: present
+  become: true
 
 - name: 2. Install python-mysqldb
-  apt: name=python-mysqldb state=present
-  become: yes
+  apt:
+    name: python-mysqldb
+    state: present
+  become: true
 
 - name: 3. Configure MySQL my.cnf
-  copy: src=./files/my.cnf dest=/etc/mysql/my.cnf owner=root group=root mode=0644 
+  copy: 
+    src: ./files/my.cnf
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644 
   notify: 
     - restart mysql
-  become: yes
+  become: true
 
 - name: 4. Add database
-  mysql_db: name=wordpress state=present collation=utf8_general_ci
-  become: yes
+  mysql_db: 
+    name: wordpress 
+    state: present 
+    collation: utf8_general_ci
+  become: true
 
 - name: 5. Add mysql-user
-  mysql_user: name=wordpress host=% password=password priv=*.*:ALL state=present
-  become: yes
+  mysql_user: 
+    name: wordpress 
+    host: "%"
+    password: password 
+    priv: "*.*:ALL"
+    state: present
+  become: true
+
+- name: 6. Add elastic apt key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+    validate_certs: false
+  become: true
+
+- name: 7. Add elastic repository
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+  become: true
+
+- name: 8. Install filebeat
+  apt:
+    name: filebeat
+    state: present
+  notify: restart filebeat
+  become: true
+
+- name: 9. Configure filebeat
+  copy:
+    src: ./files/filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
+  notify: restart filebeat
+  become: true
+

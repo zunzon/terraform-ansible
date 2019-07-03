@@ -3,9 +3,16 @@
     service:
       name: nginx
       state: restarted
-    become: yes
+    become: true
+
   - name: restart php-fpm
     service:
       name: php7.2-fpm
       state: restarted
-    become: yes
+    become: true
+
+  - name: restart filebeat
+    service:
+      name: filebeat
+      state: restarted
+    become: true

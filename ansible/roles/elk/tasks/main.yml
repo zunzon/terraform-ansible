@@ -1,0 +1,84 @@
+- name: 1. Install apt-transport-https
+  apt: 
+    name: apt-transport-https 
+    state: present
+  become: true
+
+- name: 2. Install Java
+  apt: 
+    name: openjdk-11-jdk 
+    update_cache: yes
+    state: present
+  become: true
+
+- name: 3. Add elastic apt key
+  apt_key: 
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present 
+    validate_certs: false
+  become: true
+
+- name: 4. Add elastic repository
+  apt_repository: 
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+  become: true
+
+- name: 5. Install Kibana
+  apt: 
+    name: kibana 
+    state: present
+  notify: restart kibana
+  become: true
+
+- name: 6. Install Logstash
+  apt:
+    name: logstash
+    state: present
+  notify: restart logstash
+  become: true
+
+- name: 7. Install Elasticsearch
+  apt:
+    name: elasticsearch
+    state: present
+  notify: restart elasticsearch
+  become: true
+
+- name: 8. Install Nginx
+  apt:
+    name: nginx
+    state: present
+  notify: restart nginx
+  become: true
+
+- name: 9. Configure nginx default
+  copy:
+    src: ./files/default
+    dest: /etc/nginx/sites-enabled/default
+  notify: restart nginx
+  become: true
+
+- name: 10. Configure htpasswd
+  copy:
+    src: ./files/htpasswd
+    dest: /etc/nginx/.htpasswd
+  notify: restart nginx
+  become: true
+
+- name: 11. Configure logstash pipelines
+  copy:
+    src: ./files/ls-pipelines
+    dest: /etc/logstash/pipelines.yml
+  notify: restart logstash
+  become: true
+
+- name: 12. Configure logstash configs
+  synchronize:
+    src: ./files/logstash/
+    dest: /etc/logstash/conf.d/
+  notify: restart logstash
+  become: true
+
+- name: 13. Check if services is started
+  include: services.yml

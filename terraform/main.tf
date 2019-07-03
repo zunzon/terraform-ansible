@@ -92,6 +92,42 @@ resource "aws_security_group" "btsol-db" {
   }
 }
 
+resource "aws_security_group" "monitors" {
+  name        = "btsol-monitors-sg"
+  description = "btsol-monitors-sg"
+  vpc_id      = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "btsol-monitors"
+  }
+}
 
 resource "aws_instance" "web" {
   connection {
@@ -146,7 +182,7 @@ resource "aws_instance" "monitor" {
   instance_type = "t2.micro"
   key_name = "${aws_key_pair.btsol.key_name}"
   subnet_id = "${aws_subnet.default.id}"
-  vpc_security_group_ids = ["${aws_security_group.btsol-web.id}"]
+  vpc_security_group_ids = ["${aws_security_group.monitors.id}"]
   provisioner "remote-exec" {
     inline = [
       "sudo ln -s /usr/bin/python3 /usr/bin/python",
@@ -156,4 +192,31 @@ resource "aws_instance" "monitor" {
     Name = "btsol-monitor"
   }
 }
+
+resource "aws_instance" "elk" {
+  connection {
+    host = self.public_ip
+    user = "ubuntu"
+    private_key = "${file(var.private_key_path)}"
+  }
+  ami = "ami-024a64a6685d05041"
+  instance_type = "t2.medium"
+  key_name = "${aws_key_pair.btsol.key_name}"
+  subnet_id = "${aws_subnet.default.id}"
+  vpc_security_group_ids = ["${aws_security_group.monitors.id}"]
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = "20"
+    delete_on_termination = "true"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo ln -s /usr/bin/python3 /usr/bin/python",
+    ]
+  }
+  tags = {
+    Name = "btsol-ELK"
+  }
+}
+
 

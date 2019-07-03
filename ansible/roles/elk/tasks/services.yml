@@ -1,0 +1,27 @@
+- name: Start Kibana if not started
+  service:
+    name: kibana
+    state: started
+  become: true
+
+- name: Start Logstash if not started        
+  service:
+    name: logstash
+    state: started
+  become: true
+
+- name: Start Elasticsearch if not started        
+  service:
+    name: elasticsearch
+    state: started
+  become: true
+
+- name: Start Nginx if not started        
+  service:
+    name: nginx
+    state: started
+  become: true
+
+
+
+

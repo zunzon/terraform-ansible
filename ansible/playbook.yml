@@ -4,9 +4,12 @@
     - wordpress
 - hosts: db
   roles:
-    - db
+    - { role: db, tags: ["db"] }
 - hosts: monitor
   roles:
-    - grafana
-    - prometheus
-    - grafana-nginx
+    - { role: grafana, tags: ["monitor"] }
+    - { role: grafana-nginx, tags: ["monitor"] }
+    - { role: prometheus, tags: ["monitor"] }
+- hosts: elk
+  roles:
+    - { role: elk, tags: ["elk"] }
